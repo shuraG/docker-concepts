@@ -369,19 +369,28 @@ Los contenedores tiene el principio de ser creados y eliminados tantas veces com
 
 + Una imagen es creada sobre capas de lectura.
 
-+ Cuando un contenedor es creado se anade una capa de escritura.
++ Cuando un contenedor es creado se anade una capa de escritura. Llamada `container layer.`
 
 + Una vez que un contenedor muere, la capa es eliminada, y todos los archivos que estan en esta. 
 
-+ Todo esto se debe a una caracteristica especifica de Docker: [Internals-Union Filesystem](https://martinheinz.dev/blog/44)
+
+![](https://docs.docker.com/storage/storagedriver/images/container-layers.jpg)
+
+**Nota:** Estas caracteristicas se deben a Docker [Internals-Union Filesystem](https://martinheinz.dev/blog/44)
 
 ## Persistencia de información de un contenedor
+
+![image](https://docs.docker.com/storage/images/types-of-mounts.png)
 
 Los volumenes solucionan este problema. Un volumen persiste los datos, incluso despues de que un contenedor es eliminado.
 
 Un volumen no depende del contenedor, y reside en la maquina host.
 
 Desde el punto de vista del contenedor un volumen actua como un directorio.
+
+
+
+
 
 ## Creando un volumen / docker volume create
 
@@ -439,7 +448,7 @@ FROM centos
 VOLUME /dockerfilevolume
 ```
 
-## Docker Inspect y Eliminando contenedores con volúmenes
+## Docker Inspect y eliminando contenedores con volúmenes
 
 Para poder visualizar las propiedas de un volumen especifico utilizamos
 
@@ -460,6 +469,18 @@ En donde podemos visualizar informacion a detalle del volumen.
     }
 ]
 ```
+
+Para la eliminacion de un contenedor y los volumenes asociados se usa el flag `--volumes`
+
+```console
+$ docker rm --volumes mycontainer
+```
+Note: Si un volumen es nombrado, este no sera eliminado.
+
+```console
+$ docker create -v awesome:/foo -v /bar --name hello redis
+```
+En este caso solo `/bar` es eliminado.
 
 ## Permisos de escritura/lectura en los volúmenes
 Cuando docker crea un volumen este por defecto es creadp con permisos de lectura y escritura. Muchas veces necesitamos por seguridad que algunos contenedores no puedan modificar datos o eliminarlos, ya que son solo consumidores. Para cambiar los permisos o privilegios de un contenedor con respecto a un volumen tenemos que agregar `:ro` al final del montaje del volumen.
@@ -494,6 +515,22 @@ $ docker volume create --driver local \
   --opt type=none \
   --opt device=/new/path/on/host \
   --opt o=bind my_new_volume
+```
+
+`type=none`: Docker no manejara el contenido del volumen y el path es especificado en el device option.
+
+`device`: El path en el host donde los datos del volumen seran alojados.
+
+`o=bind`: Crea un symbolic link entre el volumen y el directorio especificado en `device`.
+
+
+## Comandos Adicionales
+```bash
+# comandos utiles
+# Crea un archivo con una cadena de texto
+$ sudo echo "Hello World" >> /hostvolume/host-hello.txt
+# usa volmenes desde otro contenedor
+docker run --volumes-from <source_container> <target_container>
 ```
 
 # Redes en Docker / Pŕactica (2h)
