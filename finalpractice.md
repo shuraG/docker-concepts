@@ -38,7 +38,7 @@ Se debe escribir un archivo `Dockerfile` para que la aplicacion pueda ser constr
 
 + La imagen base para el `Dockerfile` es: `openjdk:17-jdk-slim-buster`
 + Comando para que nuestra aplicacion sea ejecutada es: `ENTRYPOINT ["java", "-jar", "app.jar"]` 
-
++ el .jar o ejecutable a copiar se encuentra ubicado en build/libs/demo-0.0.1-SNAPSHOT.jar
 
 ## Construcción de docker-compose.yml para el despliegue organizado de contenedores:
 
